@@ -132,7 +132,7 @@ function EditorPage() {
     const cleanEdges = edges.map((e) => ({ id: e.id, source: e.source, target: e.target }));
     const { error } = await supabase
       .from("workflows")
-      .update({ name, nodes: cleanNodes, edges: cleanEdges })
+      .update({ name, nodes: cleanNodes as any, edges: cleanEdges as any })
       .eq("id", id);
     setSaving(false);
     if (error) return toast.error(error.message);
