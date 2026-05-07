@@ -72,11 +72,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "FlowForge — Visual Automation Builder" },
+      { name: "description", content: "Crie automações visuais conectando APIs, IA e webhooks. Alternativa open-source ao n8n." },
+      { name: "author", content: "FlowForge" },
+      { property: "og:title", content: "FlowForge — Visual Automation Builder" },
+      { property: "og:description", content: "Crie automações visuais conectando APIs, IA e webhooks." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -108,12 +108,21 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+import { ThemeProvider } from "@/lib/theme-context";
+import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "@/components/ui/sonner";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <ThemeProvider>
+        <AuthProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
