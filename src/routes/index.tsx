@@ -26,7 +26,7 @@ function Landing() {
             Conecte qualquer API. <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Automatize tudo.</span>
           </h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">
-            FlowForge é um construtor visual de automações. Arraste blocos, conecte serviços e execute fluxos com mais de {INTEGRATIONS.length} integrações prontas.
+            Luma Hub é um construtor visual de automações. Arraste blocos, conecte serviços e execute fluxos com mais de {INTEGRATIONS.length} integrações prontas.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Button size="lg" asChild>

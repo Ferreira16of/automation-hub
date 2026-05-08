@@ -72,10 +72,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FlowForge — Visual Automation Builder" },
+      { title: "Luma Hub — Visual Automation Builder" },
       { name: "description", content: "Crie automações visuais conectando APIs, IA e webhooks. Alternativa open-source ao n8n." },
-      { name: "author", content: "FlowForge" },
-      { property: "og:title", content: "FlowForge — Visual Automation Builder" },
+      { name: "author", content: "Luma Hub" },
+      { property: "og:title", content: "Luma Hub — Visual Automation Builder" },
       { property: "og:description", content: "Crie automações visuais conectando APIs, IA e webhooks." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

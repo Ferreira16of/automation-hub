@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({ meta: [{ title: "Política de Privacidade — FlowForge" }] }),
+  head: () => ({ meta: [{ title: "Política de Privacidade — Luma Hub" }] }),
   component: Page,
 });
 
@@ -29,7 +29,7 @@ function Page() {
         <p>Usamos armazenamento local apenas para manter sua sessão e preferências de tema.</p>
 
         <h2 className="text-xl font-semibold mt-6">6. Contato</h2>
-        <p>Dúvidas: contato@flowforge.app</p>
+        <p>Dúvidas: contato@luma-hub.app</p>
       </article>
     </AppShell>
   );
