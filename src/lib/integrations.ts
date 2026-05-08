@@ -225,7 +225,7 @@ export const INTEGRATIONS: Integration[] = [
   { id: "marketstack", name: "Marketstack", category: "Finance", auth: "query-param", description: "Cotações de ações.", fields: [apiKey("access_key")] },
   { id: "fixer", name: "Fixer", category: "Finance", auth: "query-param", description: "Câmbio de moedas.", fields: [apiKey("access_key")] },
   { id: "currencyapi", name: "CurrencyAPI", category: "Finance", auth: "api-key-header", description: "Câmbio.", fields: [apiKey("apikey")] },
-  { id: "exchangerate", name: "ExchangeRate.host", category: "Finance", auth: "query-param", description: "Câmbio livre.", fields: [apiKey("access_key", false)] },
+  { id: "exchangerate", name: "ExchangeRate.host", category: "Finance", auth: "query-param", description: "Câmbio livre.", fields: [{ key: "access_key", label: "Access Key (opcional)", type: "password" }] },
   { id: "polygon", name: "Polygon.io", category: "Finance", auth: "query-param", description: "Mercado financeiro em tempo real.", fields: [apiKey("apiKey")] },
   { id: "alpha_vantage", name: "Alpha Vantage", category: "Finance", auth: "query-param", description: "Cotações e indicadores.", fields: [apiKey("apikey")] },
   { id: "finnhub", name: "Finnhub", category: "Finance", auth: "query-param", description: "Stock API.", fields: [apiKey("token")] },
