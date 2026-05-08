@@ -373,6 +373,50 @@ function PropertiesPanel({
         </>
       )}
 
+      {(type === "anthropic" || type === "groq" || type === "deepseek" || type === "mistral" || type === "together" || type === "google_ai") && (
+        <>
+          <Field label="Modelo"><Input value={cfg.model ?? ""} onChange={(e) => onUpdateConfig({ model: e.target.value })} placeholder="ex: claude-3-5-sonnet-latest" /></Field>
+          <Field label="System (opcional)"><Textarea rows={2} value={cfg.system ?? ""} onChange={(e) => onUpdateConfig({ system: e.target.value })} /></Field>
+          <Field label="Prompt"><Textarea rows={4} value={cfg.prompt ?? ""} onChange={(e) => onUpdateConfig({ prompt: e.target.value })} /></Field>
+        </>
+      )}
+
+      {type === "sendgrid" && (
+        <>
+          <Field label="From"><Input value={cfg.from ?? ""} onChange={(e) => onUpdateConfig({ from: e.target.value })} /></Field>
+          <Field label="To"><Input value={cfg.to ?? ""} onChange={(e) => onUpdateConfig({ to: e.target.value })} /></Field>
+          <Field label="Subject"><Input value={cfg.subject ?? ""} onChange={(e) => onUpdateConfig({ subject: e.target.value })} /></Field>
+          <Field label="HTML"><Textarea rows={4} value={cfg.html ?? ""} onChange={(e) => onUpdateConfig({ html: e.target.value })} /></Field>
+        </>
+      )}
+
+      {type === "discord" && (
+        <>
+          <Field label="Webhook URL (opcional)"><Input value={cfg.webhook_url ?? ""} onChange={(e) => onUpdateConfig({ webhook_url: e.target.value })} /></Field>
+          <Field label="Username (opcional)"><Input value={cfg.username ?? ""} onChange={(e) => onUpdateConfig({ username: e.target.value })} /></Field>
+          <Field label="Mensagem"><Textarea rows={3} value={cfg.content ?? ""} onChange={(e) => onUpdateConfig({ content: e.target.value })} /></Field>
+        </>
+      )}
+
+      {type === "openweather" && (
+        <>
+          <Field label="Cidade"><Input value={cfg.city ?? ""} onChange={(e) => onUpdateConfig({ city: e.target.value })} placeholder="São Paulo,BR" /></Field>
+          <Field label="Unidades">
+            <Select value={cfg.units ?? "metric"} onValueChange={(v) => onUpdateConfig({ units: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{["metric","imperial","standard"].map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+        </>
+      )}
+
+      {type === "coingecko" && (
+        <>
+          <Field label="IDs"><Input value={cfg.ids ?? "bitcoin"} onChange={(e) => onUpdateConfig({ ids: e.target.value })} placeholder="bitcoin,ethereum" /></Field>
+          <Field label="Moedas (vs)"><Input value={cfg.vs_currencies ?? "usd"} onChange={(e) => onUpdateConfig({ vs_currencies: e.target.value })} /></Field>
+        </>
+      )}
+
       <p className="text-xs text-muted-foreground">
         Use <code className="bg-muted px-1 rounded">{`{{$last.campo}}`}</code> ou <code className="bg-muted px-1 rounded">{`{{$nodes.id.campo}}`}</code> para referenciar dados.
       </p>
