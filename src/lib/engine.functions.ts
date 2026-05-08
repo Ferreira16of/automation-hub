@@ -143,6 +143,72 @@ async function runNode(
       return { text: j.choices?.[0]?.message?.content, raw: j };
     }
 
+    case "anthropic": {
+      if (!cred?.api_key) throw new Error("Credencial Anthropic ausente");
+      const r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": cred.api_key, "anthropic-version": "2023-06-01" },
+        body: JSON.stringify({
+          model: cfg.model ?? "claude-3-5-sonnet-latest",
+          max_tokens: Number(cfg.max_tokens ?? 1024),
+          system: cfg.system || undefined,
+          messages: [{ role: "user", content: cfg.prompt ?? "" }],
+        }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error?.message ?? "Erro Anthropic");
+      return { text: j.content?.[0]?.text, raw: j };
+    }
+
+    case "groq":
+    case "deepseek":
+    case "mistral":
+    case "together": {
+      if (!cred?.api_key) throw new Error("Credencial ausente");
+      const baseUrls: Record<string, string> = {
+        groq: "https://api.groq.com/openai/v1/chat/completions",
+        deepseek: "https://api.deepseek.com/chat/completions",
+        mistral: "https://api.mistral.ai/v1/chat/completions",
+        together: "https://api.together.xyz/v1/chat/completions",
+      };
+      const defaults: Record<string, string> = {
+        groq: "llama-3.3-70b-versatile",
+        deepseek: "deepseek-chat",
+        mistral: "mistral-small-latest",
+        together: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      };
+      const r = await fetch(baseUrls[node.type], {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${cred.api_key}` },
+        body: JSON.stringify({
+          model: cfg.model ?? defaults[node.type],
+          messages: [
+            ...(cfg.system ? [{ role: "system", content: cfg.system }] : []),
+            { role: "user", content: cfg.prompt ?? "" },
+          ],
+        }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error?.message ?? `Erro ${node.type}`);
+      return { text: j.choices?.[0]?.message?.content, raw: j };
+    }
+
+    case "google_ai": {
+      if (!cred?.api_key) throw new Error("Credencial Google AI ausente");
+      const model = cfg.model ?? "gemini-2.5-flash";
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cred.api_key}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: cfg.system ? { parts: [{ text: cfg.system }] } : undefined,
+          contents: [{ role: "user", parts: [{ text: cfg.prompt ?? "" }] }],
+        }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error?.message ?? "Erro Gemini");
+      return { text: j.candidates?.[0]?.content?.parts?.[0]?.text, raw: j };
+    }
+
     case "resend": {
       if (!cred?.api_key) throw new Error("Credencial Resend ausente");
       const r = await fetch("https://api.resend.com/emails", {
@@ -157,6 +223,53 @@ async function runNode(
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j.message ?? "Erro Resend");
+      return j;
+    }
+
+    case "sendgrid": {
+      if (!cred?.api_key) throw new Error("Credencial SendGrid ausente");
+      const r = await fetch("https://api.sendgrid.com/v3/mail/send", {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${cred.api_key}` },
+        body: JSON.stringify({
+          personalizations: [{ to: (Array.isArray(cfg.to) ? cfg.to : [cfg.to]).map((email: string) => ({ email })) }],
+          from: { email: cfg.from },
+          subject: cfg.subject,
+          content: [{ type: "text/html", value: cfg.html ?? "" }],
+        }),
+      });
+      if (!r.ok) throw new Error(`SendGrid HTTP ${r.status}: ${await r.text()}`);
+      return { sent: true };
+    }
+
+    case "discord": {
+      const webhook = cfg.webhook_url || cred?.webhook_url;
+      if (!webhook) throw new Error("Webhook URL Discord ausente");
+      const r = await fetch(webhook, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ content: cfg.content, username: cfg.username || undefined }),
+      });
+      if (!r.ok && r.status !== 204) throw new Error(`Discord HTTP ${r.status}`);
+      return { sent: true };
+    }
+
+    case "openweather": {
+      if (!cred?.api_key) throw new Error("Credencial OpenWeather ausente");
+      const q = encodeURIComponent(cfg.city ?? "");
+      const units = cfg.units ?? "metric";
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${q}&units=${units}&appid=${cred.api_key}`);
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.message ?? "Erro OpenWeather");
+      return j;
+    }
+
+    case "coingecko": {
+      const ids = encodeURIComponent(cfg.ids ?? "bitcoin");
+      const vs = encodeURIComponent(cfg.vs_currencies ?? "usd");
+      const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=${vs}`);
+      const j = await r.json();
+      if (!r.ok) throw new Error("Erro CoinGecko");
       return j;
     }
 
