@@ -9,7 +9,7 @@ interface ThemeCtx {
 }
 
 const Ctx = createContext<ThemeCtx | null>(null);
-const KEY = "flowforge-theme";
+const KEY = "luma-hub-theme";
 
 function applyTheme(t: Theme): "light" | "dark" {
   const sysDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;

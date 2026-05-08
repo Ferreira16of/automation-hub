@@ -73,7 +73,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <WorkflowIcon className="size-4" />
-            <span>© {new Date().getFullYear()} FlowForge</span>
+            <span>© {new Date().getFullYear()} Luma Hub</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="hover:text-foreground">Política de Privacidade</Link>
