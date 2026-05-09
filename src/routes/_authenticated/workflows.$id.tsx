@@ -75,6 +75,12 @@ function EditorPage() {
   const [scheduleCron, setScheduleCron] = useState<string>("");
   const [webhookToken, setWebhookToken] = useState<string>("");
   const [triggersOpen, setTriggersOpen] = useState(false);
+  const [registerProvider, setRegisterProvider] = useState<"telegram" | "github">("telegram");
+  const [registerCredId, setRegisterCredId] = useState<string>("");
+  const [registerRepo, setRegisterRepo] = useState<string>("");
+  const [registering, setRegistering] = useState(false);
+  const [pinging, setPinging] = useState(false);
+  const registerFn = useServerFn(registerInstantTrigger);
   const idRef = useRef(1);
 
   const webhookUrl = useMemo(() => {
