@@ -238,8 +238,61 @@ function EditorPage() {
               <div className="flex gap-2">
                 <Input value={webhookUrl} readOnly className="font-mono text-xs" />
                 <Button type="button" variant="outline" size="sm" onClick={copyWebhook}><Copy className="size-4" /></Button>
+                <Button
+                  type="button" variant="outline" size="sm"
+                  disabled={pinging || !webhookUrl}
+                  onClick={async () => {
+                    if (!active) { toast.error("Ative o workflow para receber triggers"); return; }
+                    setPinging(true);
+                    try {
+                      const r = await fetch(webhookUrl, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ test: true, at: new Date().toISOString() }) });
+                      if (r.ok) toast.success("Trigger disparado — veja em Execuções");
+                      else toast.error(`HTTP ${r.status}`);
+                    } catch (e: any) { toast.error(e?.message ?? "Falha"); }
+                    finally { setPinging(false); }
+                  }}
+                >
+                  {pinging ? <Loader2 className="size-4 animate-spin" /> : "Disparar agora"}
+                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Aceita GET/POST/PUT/DELETE. Só dispara quando o workflow está <strong>Ativo</strong>.</p>
+              <p className="text-xs text-muted-foreground">Aceita GET/POST/PUT/DELETE. Dispara <strong>instantaneamente</strong> quando ativo.</p>
+
+              <div className="pt-2 mt-2 border-t border-border space-y-2">
+                <Label className="text-xs">Registrar essa URL automaticamente em…</Label>
+                <div className="grid grid-cols-[120px_1fr_auto] gap-2">
+                  <Select value={registerProvider} onValueChange={(v) => setRegisterProvider(v as any)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="telegram">Telegram</SelectItem>
+                      <SelectItem value="github">GitHub</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={registerCredId} onValueChange={setRegisterCredId}>
+                    <SelectTrigger><SelectValue placeholder="Credencial…" /></SelectTrigger>
+                    <SelectContent>
+                      {credentials.filter((c) => c.provider === registerProvider).map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button" size="sm" disabled={registering || !registerCredId || (registerProvider === "github" && !registerRepo)}
+                    onClick={async () => {
+                      setRegistering(true);
+                      try {
+                        const res = await registerFn({ data: { workflowId: id, provider: registerProvider, credentialId: registerCredId, repo: registerRepo || undefined } });
+                        toast.success(`Registrado em ${res.provider}`);
+                      } catch (e: any) { toast.error(e?.message ?? "Falha ao registrar"); }
+                      finally { setRegistering(false); }
+                    }}
+                  >
+                    {registering ? <Loader2 className="size-4 animate-spin" /> : "Registrar"}
+                  </Button>
+                </div>
+                {registerProvider === "github" && (
+                  <Input value={registerRepo} onChange={(e) => setRegisterRepo(e.target.value)} placeholder="owner/repo" className="text-xs" />
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label className="flex items-center gap-2"><Clock className="size-3.5" /> Agendamento (cron UTC)</Label>
