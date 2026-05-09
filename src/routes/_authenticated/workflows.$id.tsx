@@ -15,6 +15,7 @@ import { useAuth } from "@/lib/auth-context";
 import { INTEGRATIONS, getIntegration } from "@/lib/integrations";
 import { useServerFn } from "@tanstack/react-start";
 import { runWorkflow } from "@/lib/engine.functions";
+import { registerInstantTrigger } from "@/lib/triggers.functions";
 import { toast } from "sonner";
 import { Play, Save, ArrowLeft, Search, Plus, Trash2, Loader2, X, Power, PowerOff, Copy, Webhook, Clock } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
