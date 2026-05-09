@@ -125,10 +125,13 @@ export type Database = {
           description: string | null
           edges: Json
           id: string
+          last_run_at: string | null
           name: string
           nodes: Json
+          schedule_cron: string | null
           updated_at: string
           user_id: string
+          webhook_token: string
         }
         Insert: {
           active?: boolean
@@ -136,10 +139,13 @@ export type Database = {
           description?: string | null
           edges?: Json
           id?: string
+          last_run_at?: string | null
           name?: string
           nodes?: Json
+          schedule_cron?: string | null
           updated_at?: string
           user_id: string
+          webhook_token?: string
         }
         Update: {
           active?: boolean
@@ -147,10 +153,13 @@ export type Database = {
           description?: string | null
           edges?: Json
           id?: string
+          last_run_at?: string | null
           name?: string
           nodes?: Json
+          schedule_cron?: string | null
           updated_at?: string
           user_id?: string
+          webhook_token?: string
         }
         Relationships: []
       }
