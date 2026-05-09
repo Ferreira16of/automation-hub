@@ -16,7 +16,8 @@ import { INTEGRATIONS, getIntegration } from "@/lib/integrations";
 import { useServerFn } from "@tanstack/react-start";
 import { runWorkflow } from "@/lib/engine.functions";
 import { toast } from "sonner";
-import { Play, Save, ArrowLeft, Search, Plus, Trash2, Loader2, X } from "lucide-react";
+import { Play, Save, ArrowLeft, Search, Plus, Trash2, Loader2, X, Power, PowerOff, Copy, Webhook, Clock } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/workflows/$id")({ component: EditorPage });
 
@@ -69,7 +70,16 @@ function EditorPage() {
   const [logs, setLogs] = useState<any[] | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteSearch, setPaletteSearch] = useState("");
+  const [active, setActive] = useState(false);
+  const [scheduleCron, setScheduleCron] = useState<string>("");
+  const [webhookToken, setWebhookToken] = useState<string>("");
+  const [triggersOpen, setTriggersOpen] = useState(false);
   const idRef = useRef(1);
+
+  const webhookUrl = useMemo(() => {
+    if (!webhookToken || typeof window === "undefined") return "";
+    return `${window.location.origin}/api/public/wh/${webhookToken}`;
+  }, [webhookToken]);
 
   useEffect(() => {
     (async () => {
@@ -79,6 +89,9 @@ function EditorPage() {
       ]);
       if (error || !wf) { toast.error("Workflow não encontrado"); nav({ to: "/dashboard" }); return; }
       setName(wf.name);
+      setActive(!!(wf as any).active);
+      setScheduleCron(((wf as any).schedule_cron as string | null) ?? "");
+      setWebhookToken(((wf as any).webhook_token as string | null) ?? "");
       const loadedNodes = (wf.nodes as any[]) ?? [];
       const loadedEdges = (wf.edges as any[]) ?? [];
       setNodes(loadedNodes.map((n) => ({ ...n, type: "flowNode" })));
@@ -132,11 +145,33 @@ function EditorPage() {
     const cleanEdges = edges.map((e) => ({ id: e.id, source: e.source, target: e.target }));
     const { error } = await supabase
       .from("workflows")
-      .update({ name, nodes: cleanNodes as any, edges: cleanEdges as any })
+      .update({
+        name,
+        nodes: cleanNodes as any,
+        edges: cleanEdges as any,
+        active,
+        schedule_cron: scheduleCron.trim() ? scheduleCron.trim() : null,
+      } as any)
       .eq("id", id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Salvo");
+  };
+
+  const toggleActive = async (next: boolean) => {
+    setActive(next);
+    const { error } = await supabase
+      .from("workflows")
+      .update({ active: next } as any)
+      .eq("id", id);
+    if (error) { setActive(!next); toast.error(error.message); return; }
+    toast.success(next ? "Workflow ativado — triggers em segundo plano" : "Workflow desativado");
+  };
+
+  const copyWebhook = async () => {
+    if (!webhookUrl) return;
+    try { await navigator.clipboard.writeText(webhookUrl); toast.success("URL copiada"); }
+    catch { toast.error("Falha ao copiar"); }
   };
 
   const run = async () => {
@@ -169,6 +204,14 @@ function EditorPage() {
           </Button>
           <Input value={name} onChange={(e) => setName(e.target.value)} className="max-w-sm font-medium" />
           <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2 px-2 py-1 rounded-md border border-border">
+              {active ? <Power className="size-3.5 text-success" /> : <PowerOff className="size-3.5 text-muted-foreground" />}
+              <span className="text-xs text-muted-foreground hidden sm:inline">{active ? "Ativo" : "Inativo"}</span>
+              <Switch checked={active} onCheckedChange={toggleActive} />
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setTriggersOpen((v) => !v)}>
+              <Webhook className="size-4 mr-1" /> Triggers
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setPaletteOpen(true)}>
               <Plus className="size-4 mr-1" /> Nó
             </Button>
@@ -180,6 +223,32 @@ function EditorPage() {
             </Button>
           </div>
         </div>
+
+        {triggersOpen && (
+          <div className="border-b border-border bg-card/40 px-4 py-3 grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Webhook className="size-3.5" /> URL do Webhook (público)</Label>
+              <div className="flex gap-2">
+                <Input value={webhookUrl} readOnly className="font-mono text-xs" />
+                <Button type="button" variant="outline" size="sm" onClick={copyWebhook}><Copy className="size-4" /></Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Aceita GET/POST/PUT/DELETE. Só dispara quando o workflow está <strong>Ativo</strong>.</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Clock className="size-3.5" /> Agendamento (cron UTC)</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={scheduleCron}
+                  onChange={(e) => setScheduleCron(e.target.value)}
+                  placeholder="*/5 * * * *  (a cada 5 min)"
+                  className="font-mono text-xs"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={save}>Salvar</Button>
+              </div>
+              <p className="text-xs text-muted-foreground">5 campos: minuto hora dia mês dow. Verificado a cada minuto enquanto Ativo.</p>
+            </div>
+          </div>
+        )}
 
         <div className="flex-1 flex min-h-0">
           <div className="flex-1 relative">

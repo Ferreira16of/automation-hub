@@ -20,6 +20,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCredentialsRouteImport } from './routes/_authenticated/credentials'
 import { Route as AuthenticatedWorkflowsIdRouteImport } from './routes/_authenticated/workflows.$id'
+import { Route as ApiPublicWhTokenRouteImport } from './routes/api/public/wh.$token'
+import { Route as ApiPublicSchedulerTickRouteImport } from './routes/api/public/scheduler.tick'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -77,6 +79,16 @@ const AuthenticatedWorkflowsIdRoute =
     path: '/workflows/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiPublicWhTokenRoute = ApiPublicWhTokenRouteImport.update({
+  id: '/api/public/wh/$token',
+  path: '/api/public/wh/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSchedulerTickRoute = ApiPublicSchedulerTickRouteImport.update({
+  id: '/api/public/scheduler/tick',
+  path: '/api/public/scheduler/tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +101,8 @@ export interface FileRoutesByFullPath {
   '/credentials': typeof AuthenticatedCredentialsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workflows/$id': typeof AuthenticatedWorkflowsIdRoute
+  '/api/public/scheduler/tick': typeof ApiPublicSchedulerTickRoute
+  '/api/public/wh/$token': typeof ApiPublicWhTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,6 +115,8 @@ export interface FileRoutesByTo {
   '/credentials': typeof AuthenticatedCredentialsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workflows/$id': typeof AuthenticatedWorkflowsIdRoute
+  '/api/public/scheduler/tick': typeof ApiPublicSchedulerTickRoute
+  '/api/public/wh/$token': typeof ApiPublicWhTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,6 +131,8 @@ export interface FileRoutesById {
   '/_authenticated/credentials': typeof AuthenticatedCredentialsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/workflows/$id': typeof AuthenticatedWorkflowsIdRoute
+  '/api/public/scheduler/tick': typeof ApiPublicSchedulerTickRoute
+  '/api/public/wh/$token': typeof ApiPublicWhTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -129,6 +147,8 @@ export interface FileRouteTypes {
     | '/credentials'
     | '/dashboard'
     | '/workflows/$id'
+    | '/api/public/scheduler/tick'
+    | '/api/public/wh/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -141,6 +161,8 @@ export interface FileRouteTypes {
     | '/credentials'
     | '/dashboard'
     | '/workflows/$id'
+    | '/api/public/scheduler/tick'
+    | '/api/public/wh/$token'
   id:
     | '__root__'
     | '/'
@@ -154,6 +176,8 @@ export interface FileRouteTypes {
     | '/_authenticated/credentials'
     | '/_authenticated/dashboard'
     | '/_authenticated/workflows/$id'
+    | '/api/public/scheduler/tick'
+    | '/api/public/wh/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,6 +189,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicSchedulerTickRoute: typeof ApiPublicSchedulerTickRoute
+  ApiPublicWhTokenRoute: typeof ApiPublicWhTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -246,6 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkflowsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/wh/$token': {
+      id: '/api/public/wh/$token'
+      path: '/api/public/wh/$token'
+      fullPath: '/api/public/wh/$token'
+      preLoaderRoute: typeof ApiPublicWhTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/scheduler/tick': {
+      id: '/api/public/scheduler/tick'
+      path: '/api/public/scheduler/tick'
+      fullPath: '/api/public/scheduler/tick'
+      preLoaderRoute: typeof ApiPublicSchedulerTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -274,6 +314,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  ApiPublicSchedulerTickRoute: ApiPublicSchedulerTickRoute,
+  ApiPublicWhTokenRoute: ApiPublicWhTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
