@@ -363,7 +363,7 @@ export async function executeWorkflow(opts: ExecuteOpts) {
   return { status, logs, result: lastOutput, error: errorMsg };
 }
 
-/** Minimal 5-field cron matcher: minute hour dom month dow. Supports *, */n, n, n,m. */
+// Minimal 5-field cron matcher: minute hour dom month dow. Supports "*", step "*"+"/n", n, ranges, lists.
 export function cronMatches(expr: string, date: Date): boolean {
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) return false;
