@@ -204,6 +204,14 @@ function EditorPage() {
           </Button>
           <Input value={name} onChange={(e) => setName(e.target.value)} className="max-w-sm font-medium" />
           <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2 px-2 py-1 rounded-md border border-border">
+              {active ? <Power className="size-3.5 text-success" /> : <PowerOff className="size-3.5 text-muted-foreground" />}
+              <span className="text-xs text-muted-foreground hidden sm:inline">{active ? "Ativo" : "Inativo"}</span>
+              <Switch checked={active} onCheckedChange={toggleActive} />
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setTriggersOpen((v) => !v)}>
+              <Webhook className="size-4 mr-1" /> Triggers
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setPaletteOpen(true)}>
               <Plus className="size-4 mr-1" /> Nó
             </Button>
@@ -215,6 +223,32 @@ function EditorPage() {
             </Button>
           </div>
         </div>
+
+        {triggersOpen && (
+          <div className="border-b border-border bg-card/40 px-4 py-3 grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Webhook className="size-3.5" /> URL do Webhook (público)</Label>
+              <div className="flex gap-2">
+                <Input value={webhookUrl} readOnly className="font-mono text-xs" />
+                <Button type="button" variant="outline" size="sm" onClick={copyWebhook}><Copy className="size-4" /></Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Aceita GET/POST/PUT/DELETE. Só dispara quando o workflow está <strong>Ativo</strong>.</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Clock className="size-3.5" /> Agendamento (cron UTC)</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={scheduleCron}
+                  onChange={(e) => setScheduleCron(e.target.value)}
+                  placeholder="*/5 * * * *  (a cada 5 min)"
+                  className="font-mono text-xs"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={save}>Salvar</Button>
+              </div>
+              <p className="text-xs text-muted-foreground">5 campos: minuto hora dia mês dow. Verificado a cada minuto enquanto Ativo.</p>
+            </div>
+          </div>
+        )}
 
         <div className="flex-1 flex min-h-0">
           <div className="flex-1 relative">
