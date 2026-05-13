@@ -309,7 +309,7 @@ export async function executeWorkflow(opts: ExecuteOpts) {
 
   const incoming = new Set(edges.map((e) => e.target));
   const start =
-    nodes.find((n) => !incoming.has(n.id) && (n.type === "core.start" || n.type === "core.webhook" || n.type === "core.schedule")) ??
+    nodes.find((n) => !incoming.has(n.id) && (n.type.startsWith("trigger.") || n.type === "core.start" || n.type === "core.webhook" || n.type === "core.schedule")) ??
     nodes.find((n) => !incoming.has(n.id));
   if (!start) throw new Error("Nenhum nó inicial encontrado");
 
