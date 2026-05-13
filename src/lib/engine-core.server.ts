@@ -56,12 +56,12 @@ async function runNode(
   const cfg = deepInterpolate(node.data?.config ?? {}, ctx);
   const cred = node.data?.credentialId ? credentialsById[node.data.credentialId] : null;
 
-  switch (node.type) {
-    case "core.start":
-    case "core.webhook":
-    case "core.schedule":
-      return ctx.$trigger ?? {};
+  // Any trigger.* node (and legacy core.start/webhook/schedule) is just a passthrough.
+  if (node.type.startsWith("trigger.") || node.type === "core.start" || node.type === "core.webhook" || node.type === "core.schedule") {
+    return ctx.$trigger ?? {};
+  }
 
+  switch (node.type) {
     case "core.set": {
       const out: Record<string, any> = {};
       for (const item of cfg.items ?? []) out[item.key] = item.value;
@@ -309,7 +309,7 @@ export async function executeWorkflow(opts: ExecuteOpts) {
 
   const incoming = new Set(edges.map((e) => e.target));
   const start =
-    nodes.find((n) => !incoming.has(n.id) && (n.type === "core.start" || n.type === "core.webhook" || n.type === "core.schedule")) ??
+    nodes.find((n) => !incoming.has(n.id) && (n.type.startsWith("trigger.") || n.type === "core.start" || n.type === "core.webhook" || n.type === "core.schedule")) ??
     nodes.find((n) => !incoming.has(n.id));
   if (!start) throw new Error("Nenhum nó inicial encontrado");
 

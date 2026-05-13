@@ -68,10 +68,28 @@ const pass = (key: string, label: string, required = true): CredentialField => (
 });
 
 export const INTEGRATIONS: Integration[] = [
+  // ───── Triggers (entradas) ─────
+  { id: "trigger.manual",   name: "Manual Trigger",   category: "Core", description: "Inicia o workflow manualmente.", fields: [], auth: "none" },
+  { id: "trigger.webhook",  name: "Webhook Trigger",  category: "Core", description: "Inicia ao receber HTTP em URL pública.", fields: [], auth: "none" },
+  { id: "trigger.schedule", name: "Schedule Trigger", category: "Core", description: "Inicia em intervalos via cron.", fields: [], auth: "none" },
+  { id: "trigger.form",     name: "Form Trigger",     category: "Core", description: "Inicia ao receber submit de formulário.", fields: [], auth: "none" },
+  { id: "trigger.email",    name: "Email Trigger",    category: "Email", description: "Inicia ao receber e-mail (via webhook do provedor).", fields: [], auth: "none" },
+  { id: "trigger.telegram", name: "Telegram Trigger", category: "Messaging", description: "Inicia em mensagens recebidas no bot do Telegram.", fields: [], auth: "none" },
+  { id: "trigger.github",   name: "GitHub Trigger",   category: "Dev", description: "Inicia em eventos de push / PR / issue.", fields: [], auth: "none" },
+  { id: "trigger.stripe",   name: "Stripe Trigger",   category: "Payments", description: "Inicia em eventos do Stripe (charge, subscription…).", fields: [], auth: "none" },
+  { id: "trigger.discord",  name: "Discord Trigger",  category: "Messaging", description: "Inicia em comandos / mensagens do Discord.", fields: [], auth: "none" },
+  { id: "trigger.slack",    name: "Slack Trigger",    category: "Messaging", description: "Inicia em eventos do Slack.", fields: [], auth: "none" },
+  { id: "trigger.shopify",  name: "Shopify Trigger",  category: "Payments", description: "Inicia em pedidos / clientes / produtos.", fields: [], auth: "none" },
+  { id: "trigger.calendly", name: "Calendly Trigger", category: "Productivity", description: "Inicia em agendamentos novos.", fields: [], auth: "none" },
+  { id: "trigger.typeform", name: "Typeform Trigger", category: "Productivity", description: "Inicia em respostas de Typeform.", fields: [], auth: "none" },
+  { id: "trigger.airtable", name: "Airtable Trigger", category: "Productivity", description: "Inicia em mudanças de registro.", fields: [], auth: "none" },
+  { id: "trigger.notion",   name: "Notion Trigger",   category: "Productivity", description: "Inicia em mudanças de página/database.", fields: [], auth: "none" },
+  { id: "trigger.gmail",    name: "Gmail Trigger",    category: "Email", description: "Inicia ao receber novos e-mails.", fields: [], auth: "none" },
+
   // ───── Core ─────
   { id: "core.http", name: "HTTP Request", category: "Core", description: "Faz requisições HTTP arbitrárias.", fields: [], auth: "none" },
-  { id: "core.webhook", name: "Webhook", category: "Core", description: "Recebe chamadas externas para iniciar workflows.", fields: [], auth: "none" },
-  { id: "core.schedule", name: "Schedule (Cron)", category: "Core", description: "Dispara em intervalos definidos.", fields: [], auth: "none" },
+  { id: "core.webhook", name: "Webhook (legado)", category: "Core", description: "Recebe chamadas externas para iniciar workflows.", fields: [], auth: "none" },
+  { id: "core.schedule", name: "Schedule (legado)", category: "Core", description: "Dispara em intervalos definidos.", fields: [], auth: "none" },
   { id: "core.code", name: "Code (JS)", category: "Core", description: "Executa JavaScript no contexto do workflow.", fields: [], auth: "none" },
   { id: "core.set", name: "Set / Transform", category: "Core", description: "Modifica e mapeia dados entre nós.", fields: [], auth: "none" },
   { id: "core.if", name: "IF / Branch", category: "Core", description: "Ramifica o fluxo conforme uma condição.", fields: [], auth: "none" },
