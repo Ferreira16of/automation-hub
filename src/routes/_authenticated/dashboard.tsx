@@ -102,7 +102,7 @@ function Dashboard() {
                     <h3 className="font-semibold truncate">{w.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{w.description ?? "Sem descrição"}</p>
                   </Link>
-                  <button onClick={() => remove(w.id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity" aria-label="Excluir">
+                  <button onClick={() => setConfirmId(w.id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity" aria-label="Excluir">
                     <Trash2 className="size-4" />
                   </button>
                 </div>
