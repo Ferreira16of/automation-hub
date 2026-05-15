@@ -19,15 +19,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s);
-      setLoading(false);
+    let mounted = true;
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      if (!mounted) return;
+      // Avoid re-rendering whole tree on silent refreshes when user/session are equivalent.
+      setSession((prev) => {
+        if (event === "TOKEN_REFRESHED" && prev?.user?.id === s?.user?.id) {
+          // keep new tokens but reuse object identity for user — minimal change
+          return s ?? prev;
+        }
+        return s;
+      });
+      if (loading) setLoading(false);
     });
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+      if (!mounted) return;
+      setSession((prev) => prev ?? data.session);
       setLoading(false);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signIn: AuthCtx["signIn"] = async (email, password) => {
